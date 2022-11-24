@@ -23,37 +23,6 @@ seaimg = 'images/base.jfif'
 gameimgs = {}
 elevation = window_height * 0.8
 
-def createPipe():
-    offset = window_height/3
-    pipeheight = gameimgs['pipe'][0].get_height()
-
-    pipeY2 = offset + random.randrange(0, window_height - gameimgs['sea_lvl'].get_height() -1.2*offset)
-    pipeX = window_height + 10
-    pipeY1 = pipeheight - pipeY2 + offset
-    pipe = [
-        #upper pipe
-        {'x' : pipeX, 'y': -pipeY1},
-
-        #lower pipe
-        {'x': pipeX, 'y': pipeY2}
-    ]
-    return pipe
-
-def GameOver(horizontal, vertical, up_pipes, down_pipes):
-    if vertical > elevation -25 or vertical < 0:
-        return True
-    
-    for pipe in up_pipes:
-        pipeHeight = gameimgs['pipe'][0].get_height()
-        if (vertical < pipeHeight + pipe['y'] and abs(horizontal - pipe['x']) < gameimgs['pipe'][0].get_width()):
-            return True
-
-        for pipe in down_pipes:
-            if (vertical + gameimgs['bird'].get_height() > pipe['y']) and abs(horizontal - pipe['x']) < gameimgs['pipe'][0].get_width():
-                return True
-        
-        return False
-
 def flappygame():
     player_score = 0
     horizontal = window_height/5
@@ -146,6 +115,43 @@ def flappygame():
         for num in numbers:
             window.blit(gameimgs['scoreimgs'][num], (Xoffset, window_width*0.03))
             Xoffset += gameimgs['scoreimgs'][num].get_width()
+
+        pygame.display.update()
+
+        fpsclock.tick(fps)
+
+def createPipe():
+    offset = window_height/3
+    pipeheight = gameimgs['pipe'][0].get_height()
+
+    pipeY2 = offset + random.randrange(0, int(window_height - gameimgs['sea_lvl'].get_height() -1.2*offset))
+    pipeX = window_height + 10
+    pipeY1 = pipeheight - pipeY2 + offset
+    pipe = [
+        #upper pipe
+        {'x' : pipeX, 'y': -pipeY1},
+
+        #lower pipe
+        {'x': pipeX, 'y': pipeY2}
+    ]
+    return pipe
+
+def GameOver(horizontal, vertical, up_pipes, down_pipes):
+    if vertical > elevation -25 or vertical < 0:
+        return True
+    
+    for pipe in up_pipes:
+        pipeHeight = gameimgs['pipe'][0].get_height()
+        if (vertical < pipeHeight + pipe['y'] and abs(horizontal - pipe['x']) < gameimgs['pipe'][0].get_width()):
+            return True
+
+        for pipe in down_pipes:
+            if (vertical + gameimgs['bird'].get_height() > pipe['y']) and abs(horizontal - pipe['x']) < gameimgs['pipe'][0].get_width():
+                return True
+        
+        return False
+
+
 
 #Game starts here
 if __name__ == "__main__":
