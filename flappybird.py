@@ -1,15 +1,27 @@
-import pygame, sys, random, mysql.connector
+import pygame, sys, random, mysql.connector, tkinter, tkinter.simpledialog
 from pygame.locals import *
+
+
+def getPlayerName() -> int:
+    tk = tkinter.Tk()
+    tk.withdraw()
+    playerName = tkinter.simpledialog.askstring("Name?", "Enter name of player", parent=tk)
+    tk.destroy()
+    return playerName
 
 def sql():
     #Connects to database
     my = mysql.connector.connect(host="localhost", user="root", password="password", database="flappybird")
     mycursor = my.cursor()
-    result = 0 
-    player = input("Enter your name: ")
-    #Sends information
-    mycursor.execute("insert into table(player,score) values ({}, '{}')".format(player,result))
-    mycursor.commit()
+    result = int(player_score)
+    playername = getPlayerName()
+    #Sends information¨
+    sequel= "insert into playerScore(player,score) values(%s, %s)"
+    val = (playername, result)
+    mycursor.execute(sequel,val)
+    my.commit()
+    mycursor.execute("select * from playerScore")
+
 
 #setting up variables
 window_width = 600
@@ -19,11 +31,13 @@ fps = 32
 pipeimg = 'images/pipe.png'
 backgroundimg = 'images/background.jpg'
 birdimg = 'images/bird.png'
-seaimg = 'images/base.jfif'
+seaimg = 'images/base.jfif' 
 gameimgs = {}
 elevation = window_height * 0.8
+player_score = 0
 
 def flappygame():
+    global player_score
     player_score = 0
     horizontal = window_height/5
     vertical = window_width/2
@@ -65,15 +79,16 @@ def flappygame():
         
         gameover = GameOver(horizontal, vertical, uppipes, downpipes)
         if gameover:
+            sql()
             return
 
-        playerMidPos = horizontal + gameimgs['pipe'][0].get_width()/2
+        playerMidPos = horizontal + gameimgs['bird'].get_width()/2
         for pipe in uppipes:
-            pipeMidPos = pipe['y'] + gameimgs['pipe'][0].get_width()/2
+            pipeMidPos = pipe['x'] + gameimgs['pipe'][0].get_width()/2
             if pipeMidPos <= playerMidPos < pipeMidPos +4:
                 player_score += 1
                 print(f"Your score is {player_score}")
-
+ 
         if bird_velocity_y < bird_max_vel_y and not bird_flap:
             bird_velocity_y += birdAccY
         
@@ -137,7 +152,7 @@ def createPipe():
     return pipe
 
 def GameOver(horizontal, vertical, up_pipes, down_pipes):
-    if vertical > elevation -25 or vertical < 0:
+    if vertical > elevation-25 or vertical < 0:
         return True
     
     for pipe in up_pipes:
