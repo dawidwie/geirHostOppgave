@@ -1,8 +1,8 @@
-import pygame, sys, random, mysql.connector, tkinter, tkinter.simpledialog
+import pygame, sys, random, mysql.connector, tkinter, tkinter.simpledialog, time
 from pygame.locals import *
 
 
-def getPlayerName() -> int:
+def getPlayerName() -> str:
     tk = tkinter.Tk()
     tk.withdraw()
     playerName = tkinter.simpledialog.askstring("Name?", "Enter name of player", parent=tk)
@@ -15,12 +15,37 @@ def sql():
     mycursor = my.cursor()
     result = int(player_score)
     playername = getPlayerName()
-    #Sends information¨
+    
+        
+    #Sends    information
     sequel= "insert into playerScore(player,score) values(%s, %s)"
     val = (playername, result)
     mycursor.execute(sequel,val)
     my.commit()
-    mycursor.execute("select * from playerScore")
+    mycursor.execute("select * from playerScore order by score desc")
+    scores = mycursor.fetchmany(size=10)
+    font = pygame.font.Font('ARCADECLASSIC.TTF', 32)
+    highfont = pygame.font.Font('ARCADECLASSIC.TTF', 40)
+    i = 50
+    list = 1
+    highscore = highfont.render("TOP 10 HIGH SCORES",True,white)
+    highscorerect = highscore.get_rect()
+    highscorerect.center = (window_width // 2, window_height // 2)
+    highscorerect.top = 10
+    window.blit(highscore,highscorerect)
+    for row in scores:
+        scorekey = row[1].strip()
+        scoreval = row[2]
+        scoreIn = f"{str(list)} {scorekey} {scoreval}"
+        text = font.render(scoreIn,True,white)
+        textrect= text.get_rect()
+        textrect.center = (window_width // 2, window_height // 2)
+        textrect.top = i
+        window.blit(text,textrect)
+        pygame.display.update()
+        i += 30
+        list += 1
+    
 
 
 #setting up variables
@@ -35,6 +60,7 @@ seaimg = 'images/base.jfif'
 gameimgs = {}
 elevation = window_height * 0.8
 player_score = 0
+white = (255,255,255)
 
 def flappygame():
     global player_score
@@ -79,7 +105,9 @@ def flappygame():
         
         gameover = GameOver(horizontal, vertical, uppipes, downpipes)
         if gameover:
+            
             sql()
+            time.sleep(3)
             return
 
         playerMidPos = horizontal + gameimgs['bird'].get_width()/2
@@ -87,7 +115,7 @@ def flappygame():
             pipeMidPos = pipe['x'] + gameimgs['pipe'][0].get_width()/2
             if pipeMidPos <= playerMidPos < pipeMidPos +4:
                 player_score += 1
-                print(f"Your score is {player_score}")
+
  
         if bird_velocity_y < bird_max_vel_y and not bird_flap:
             bird_velocity_y += birdAccY
