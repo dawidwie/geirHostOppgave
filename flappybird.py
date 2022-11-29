@@ -152,7 +152,6 @@ def flappygame():
         gameover = GameOver(horizontal, vertical, uppipes, downpipes)
         if gameover:
             sql()
-            # time.sleep(3)
             return
 
         #Checks if player has passed a pipe
@@ -193,8 +192,6 @@ def flappygame():
         for upperPipe, lowerPipe in zip(uppipes, downpipes):
             window.blit(gameimgs['pipe'][0], (upperPipe['x'], upperPipe['y']))
             window.blit(gameimgs['pipe'][1], (lowerPipe['x'], lowerPipe['y']))
-
-
         window.blit(gameimgs['sea_lvl'], (ground,elevation))
         window.blit(gameimgs['bird'], (horizontal, vertical))
 
@@ -217,7 +214,7 @@ def createPipe():
     offset = window_height/3
     pipeheight = gameimgs['pipe'][0].get_height()
     pipeY2 = offset + random.randrange(0, int(window_height - gameimgs['sea_lvl'].get_height() -1.2*offset))
-    pipeX = window_height + 10
+    pipeX = window_width + 10
     pipeY1 = pipeheight - pipeY2 + offset
     pipe = [
         #upper pipe
