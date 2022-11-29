@@ -1,7 +1,7 @@
 import pygame, sys, random, mysql.connector, tkinter, tkinter.simpledialog, time
 from pygame.locals import *
 
-# Displays dialouge boc that gets player name
+# Displays dialouge box that gets player name
 def getPlayerName() -> str:
     tk = tkinter.Tk()
     tk.withdraw()
@@ -30,18 +30,41 @@ def sql():
     #fetches highscore list sorted by score
     mycursor.execute("select * from playerScore order by score desc")   
     scores = mycursor.fetchmany(size=10)
+    window.fill(black)
 
-    #sets font and size for highscore list
-    font = pygame.font.Font('ARCADECLASSIC.TTF', 28)
-    highfont = pygame.font.Font('ARCADECLASSIC.TTF', 40)
-    enterfont = pygame.font.Font('ARCADECLASSIC.TTF', 20)
+    scoredis = font.render("Y o u r   S c o r e",True,white)
+    scoredisrect = scoredis.get_rect()
+    scoredisrect.center = (window_width //2, window_height // 2)
+    scoredisrect.top = 70
+    scoreshow = bigfont.render(str(result), True, white)
+    scoreshowrect = scoreshow.get_rect()
+    scoreshowrect.center = (window_width //2, window_height // 2)
+    scoreshowrect.top = 150
+    continuetxt = enterfont.render("P R E S S   S P A C E   T O   C O N T I N U E",True,white)
+    continuetxtrect = continuetxt.get_rect()
+    continuetxtrect.left = 20
+    continuetxtrect.bottom = 490
+    window.blit(scoredis,scoredisrect)
+    window.blit(scoreshow,scoreshowrect)
+    pygame.display.update()
+    time.sleep(1)
+    window.blit(continuetxt,continuetxtrect)
+    pygame.display.update()
 
-
+    pygame.event.clear()
+    while True:
+        event = pygame.event.wait()
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
+        elif event.type == KEYDOWN:
+            if event.key == K_SPACE:
+                break
     #sets top height value and displays "TOP 10 HIGH SCORES" to game
     window.fill(black)
     topval = 70
     toplist = 1
-    highscore = highfont.render("TOP  10  HIGH  SCORES",True,white)
+    highscore = highfont.render("T O P   1 0   H I G H   S C O R E S",True,white)
     highscorerect = highscore.get_rect()
     highscorerect.center = (window_width // 2, window_height // 2)
     highscorerect.top = 10
@@ -57,16 +80,16 @@ def sql():
         textrect.center = (window_width // 2, window_height // 2)
         textrect.top = topval
         window.blit(text,textrect)
-        print(scoreIn)
-        pygame.display.update()
+        
         topval += 35
         toplist += 1
-    
+    pygame.display.update()
     enterwait = enterfont.render("P R E S S   E N T E R   T O   S T A R T   N E W   G A M E ", True, white)
     enterwaitrect = enterwait.get_rect()
 
     enterwaitrect.right = 375
     enterwaitrect.bottom = 490
+    time.sleep(1)
     window.blit(enterwait,enterwaitrect)
     pygame.display.update()
 
@@ -94,13 +117,15 @@ window = pygame.display.set_mode((window_width,window_height))
 fps = 32
 pipeimg = 'images/pipe.png'
 backgroundimg = 'images/background.jpg'
-birdimg = 'images/bird.png'
-seaimg = 'images/base.jfif' 
+leoimg = 'images/leo.jpg'
+seaimg = 'images/base.jfif'
 gameimgs = {}
 elevation = window_height * 0.8
 player_score = 0
 white = (255,255,255)
 black = (0,0,0)
+green = (163,252,84)
+
 
 def flappygame():
     #reset player score
@@ -127,14 +152,14 @@ def flappygame():
         {'x' : window_width+200-tempheight+(window_width/2),'y': secondpipe[0]['y']}       
     ]
 
-    #set variables for pipes and bird
+    #set variables for pipes and leo
     pipeVelx = -4
-    bird_velocity_y = -9
-    bird_max_vel_y = 10
-    bird_min_vel_y = -8
-    birdAccY = 1
-    bird_flap_vel = -8
-    bird_flap = False
+    leo_velocity_y = -9
+    leo_max_vel_y = 10
+    leo_min_vel_y = -8
+    leoAccY = 1
+    leo_flap_vel = -8
+    leo_flap = False
 
 
     while True:
@@ -145,8 +170,8 @@ def flappygame():
                 sys.exit()
             if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
                 if vertical > 0:
-                    bird_velocity_y = bird_flap_vel
-                    bird_flap = True
+                    leo_velocity_y = leo_flap_vel
+                    leo_flap = True
         
         #checks if player collisions happens
         gameover = GameOver(horizontal, vertical, uppipes, downpipes)
@@ -155,21 +180,21 @@ def flappygame():
             return
 
         #Checks if player has passed a pipe
-        playerMidPos = horizontal + gameimgs['bird'].get_width()/2
+        playerMidPos = horizontal + gameimgs['leo'].get_width()/2
         for pipe in uppipes:
             pipeMidPos = pipe['x'] + gameimgs['pipe'][0].get_width()/2
             if pipeMidPos <= playerMidPos < pipeMidPos +4:
                 player_score += 1
 
     
-        if bird_velocity_y < bird_max_vel_y and not bird_flap:
-            bird_velocity_y += birdAccY
+        if leo_velocity_y < leo_max_vel_y and not leo_flap:
+            leo_velocity_y += leoAccY
         
         
-        if bird_flap:
-            bird_flap = False
-        playerHeight = gameimgs['bird'].get_height()
-        vertical = vertical + min(bird_velocity_y, elevation - vertical - playerHeight)
+        if leo_flap:
+            leo_flap = False
+        playerHeight = gameimgs['leo'].get_height()
+        vertical = vertical + min(leo_velocity_y, elevation - vertical - playerHeight)
 
 
         for upperPipe, lowerPipe in zip(uppipes, downpipes):
@@ -187,23 +212,25 @@ def flappygame():
             uppipes.pop(0)
             downpipes.pop(0)
 
-        #draw pipes, background and bird onto game
+        #draw pipes, background and leo onto game
         window.blit(gameimgs['background'], (0,0))
         for upperPipe, lowerPipe in zip(uppipes, downpipes):
             window.blit(gameimgs['pipe'][0], (upperPipe['x'], upperPipe['y']))
             window.blit(gameimgs['pipe'][1], (lowerPipe['x'], lowerPipe['y']))
         window.blit(gameimgs['sea_lvl'], (ground,elevation))
-        window.blit(gameimgs['bird'], (horizontal, vertical))
+        window.blit(gameimgs['leo'], (horizontal, vertical))
 
-        #draw score onto screen
-        numbers = [int(x) for x in list(str(player_score))]
-        width = 0
-        for num in numbers:
-            width += gameimgs['scoreimgs'][num].get_width()
-        Xoffset = (window_width-width)/1.1
-        for num in numbers:
-            window.blit(gameimgs['scoreimgs'][num], (Xoffset, window_width*0.03))
-            Xoffset += gameimgs['scoreimgs'][num].get_width()
+
+        #Draw score to screen
+        player_scoredis = highfont.render(str(player_score),True, white)
+        player_scoredisrect = player_scoredis.get_rect()
+        player_scoredisrect.top = 10
+        player_scoredisrect.right = 570
+        if player_score >= 10:
+            player_scoredisrect.right = 568
+        if player_score >= 100:
+            player_scoredisrect.right = 566
+        window.blit(player_scoredis,player_scoredisrect)
 
         #Update display at 32 frames per second
         pygame.display.update()
@@ -236,7 +263,7 @@ def GameOver(horizontal, vertical, up_pipes, down_pipes):
             return True
 
         for pipe in down_pipes:
-            if (vertical + gameimgs['bird'].get_height() > (pipe['y'] +15)) and abs(horizontal - pipe['x']) < (gameimgs['pipe'][0].get_width()-30):
+            if (vertical + gameimgs['leo'].get_height() > (pipe['y'] +15)) and abs(horizontal - pipe['x']) < (gameimgs['pipe'][0].get_width()-30):
                 return True
         
         return False
@@ -250,33 +277,50 @@ if __name__ == "__main__":
     pygame.init()
     fpsclock = pygame.time.Clock()
 
-    #sets name for game window
-    pygame.display.set_caption('Flappy Bird Game')
+    smallfont = pygame.font.Font('ARCADECLASSIC.TTF', 15)
+    font = pygame.font.Font('ARCADECLASSIC.TTF', 28)
+    highfont = pygame.font.Font('ARCADECLASSIC.TTF', 40)
+    enterfont = pygame.font.Font('ARCADECLASSIC.TTF', 20)
+    bigfont = pygame.font.Font('ARCADECLASSIC.TTF', 60)
 
-    #Load all images
-    gameimgs['scoreimgs'] = (
-        pygame.image.load('images/0.png').convert_alpha(),
-        pygame.image.load('images/1.png').convert_alpha(),
-        pygame.image.load('images/2.png').convert_alpha(),
-        pygame.image.load('images/3.png').convert_alpha(),
-        pygame.image.load('images/4.png').convert_alpha(),
-        pygame.image.load('images/5.png').convert_alpha(),
-        pygame.image.load('images/6.png').convert_alpha(),
-        pygame.image.load('images/7.png').convert_alpha(),
-        pygame.image.load('images/8.png').convert_alpha(),
-        pygame.image.load('images/9.png').convert_alpha()
-    )
+    #sets name for game window
+    pygame.display.set_caption('Flappy leo Game')
+
+
     gameimgs['pipe'] = (pygame.transform.rotate(pygame.image.load(pipeimg).convert_alpha(),180), pygame.image.load(pipeimg).convert_alpha())
     gameimgs['background'] = pygame.image.load(backgroundimg).convert_alpha()
     gameimgs['sea_lvl'] = pygame.image.load(seaimg).convert_alpha()
-    gameimgs['bird'] = pygame.image.load(birdimg).convert_alpha()
+    gameimgs['leo'] = pygame.image.load(leoimg).convert_alpha()
 
-    print("WELCOME TO FLAPPY BIRD")
-    print("Press space or enter to start")
+
+    window.fill(black)
+    start = bigfont.render("F L A P P Y   L E O",True, green)
+    startrect = start.get_rect()
+    startrect.center = (window_width // 2, window_height // 2)
+    startrect.top = 100
+    space = font.render("P R E S S   S P A C E   T O   S T A R T",True,white)
+    spacerect = space.get_rect()
+    spacerect.center = (window_width // 2, window_height // 2)
+    spacerect.top = 200
+    window.blit(start,startrect)
+    pygame.display.update()
+    time.sleep(0.5)
+    window.blit(space,spacerect)
+    pygame.display.update()
 
     while True:
-        #sets variables for collision
-        vertical = (window_height - gameimgs['bird'].get_height())/2
+        event = pygame.event.wait()
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
+        elif event.type == KEYDOWN:
+            if event.key == K_SPACE:
+                break
+    
+    pygame.event.clear()
+    while True:
+        #sets variables for collision and leo placement
+        vertical = (window_height - gameimgs['leo'].get_height())/2
         horizontal = window_width/5
         ground = 0
 
@@ -293,7 +337,7 @@ if __name__ == "__main__":
 
                 else:
                     window.blit(gameimgs['background'], (0,0))
-                    window.blit(gameimgs['bird'], (horizontal, vertical))
+                    window.blit(gameimgs['leo'], (horizontal, vertical))
                     window.blit(gameimgs['sea_lvl'],(ground, elevation))
 
                     pygame.display.update()
