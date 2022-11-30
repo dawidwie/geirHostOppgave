@@ -58,6 +58,9 @@ def sql():
             pygame.quit()
             sys.exit()
         elif event.type == KEYDOWN:
+            if event.key == K_ESCAPE:
+                pygame.quit()
+                sys.exit()
             if event.key == K_SPACE:
                 break
     #sets top height value and displays "TOP 10 HIGH SCORES" to game
@@ -100,6 +103,9 @@ def sql():
             pygame.quit()
             sys.exit()
         elif event.type == KEYDOWN:
+            if event.key == K_ESCAPE:
+                pygame.quit()
+                sys.exit()
             if event.key == K_RETURN:
                 return
                 
@@ -115,7 +121,7 @@ window_width = 600
 window_height = 500
 window = pygame.display.set_mode((window_width,window_height))
 fps = 32
-pipeimg = 'images/pipe.png'
+pipeimg = 'images/pipeleo.jpg'
 backgroundimg = 'images/background.jpg'
 leoimg = 'images/leo.jpg'
 seaimg = 'images/base.jfif'
@@ -259,11 +265,11 @@ def GameOver(horizontal, vertical, up_pipes, down_pipes):
     
     for pipe in up_pipes:
         pipeHeight = gameimgs['pipe'][0].get_height()
-        if (vertical < (pipeHeight + pipe['y'] -15 ) and abs(horizontal - pipe['x']) < (gameimgs['pipe'][0].get_width()-30)):
+        if (vertical < (pipeHeight + pipe['y']-2 ) and abs(horizontal - pipe['x']) < (gameimgs['pipe'][0].get_width()-5)):
             return True
 
         for pipe in down_pipes:
-            if (vertical + gameimgs['leo'].get_height() > (pipe['y'] +15)) and abs(horizontal - pipe['x']) < (gameimgs['pipe'][0].get_width()-30):
+            if (vertical + gameimgs['leo'].get_height()-2 > (pipe['y'])) and abs(horizontal - pipe['x']) < (gameimgs['pipe'][0].get_width()-50):
                 return True
         
         return False
@@ -284,7 +290,7 @@ if __name__ == "__main__":
     bigfont = pygame.font.Font('ARCADECLASSIC.TTF', 60)
 
     #sets name for game window
-    pygame.display.set_caption('Flappy leo Game')
+    pygame.display.set_caption('Flappy Leo Game')
 
 
     gameimgs['pipe'] = (pygame.transform.rotate(pygame.image.load(pipeimg).convert_alpha(),180), pygame.image.load(pipeimg).convert_alpha())
@@ -302,7 +308,7 @@ if __name__ == "__main__":
     spacerect = space.get_rect()
     spacerect.center = (window_width // 2, window_height // 2)
     spacerect.top = 200
-    window.blit(start,startrect)
+    window.blit(start,startrect) 
     pygame.display.update()
     time.sleep(0.5)
     window.blit(space,spacerect)
