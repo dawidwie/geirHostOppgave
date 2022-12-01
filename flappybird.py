@@ -20,7 +20,6 @@ def sql():
     result = int(player_score)
     playername = getPlayerName()
     
-        
     #Sends information
     sequel= "insert into playerScore(player,score) values(%s, %s)"
     val = (playername, result)
@@ -47,7 +46,7 @@ def sql():
     window.blit(scoredis,scoredisrect)
     window.blit(scoreshow,scoreshowrect)
     pygame.display.update()
-    time.sleep(1)
+    time.sleep(0.2)
     window.blit(continuetxt,continuetxtrect)
     pygame.display.update()
 
@@ -92,7 +91,7 @@ def sql():
 
     enterwaitrect.right = 375
     enterwaitrect.bottom = 490
-    time.sleep(1)
+    time.sleep(0.2)
     window.blit(enterwait,enterwaitrect)
     pygame.display.update()
 
@@ -125,6 +124,7 @@ pipeimg = 'images/pipeleo.jpg'
 backgroundimg = 'images/background.jpg'
 leoimg = 'images/leo.jpg'
 seaimg = 'images/base.jfif'
+explosion = 'images/explosion2.png'
 gameimgs = {}
 elevation = window_height * 0.8
 player_score = 0
@@ -135,7 +135,7 @@ green = (163,252,84)
 
 def flappygame():
     #reset player score
-    global player_score
+    global player_score, fps
     player_score = 0
 
     #set area variables
@@ -174,7 +174,11 @@ def flappygame():
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 pygame.quit()
                 sys.exit()
-            if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
+            elif event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
+                if vertical > 0:
+                    leo_velocity_y = leo_flap_vel
+                    leo_flap = True
+            elif event.type == MOUSEBUTTONDOWN:
                 if vertical > 0:
                     leo_velocity_y = leo_flap_vel
                     leo_flap = True
@@ -182,6 +186,9 @@ def flappygame():
         #checks if player collisions happens
         gameover = GameOver(horizontal, vertical, uppipes, downpipes)
         if gameover:
+            window.blit(gameimgs['explosion'],(horizontal-25, vertical-15))
+            pygame.display.update()
+
             sql()
             return
 
@@ -238,7 +245,7 @@ def flappygame():
             player_scoredisrect.right = 566
         window.blit(player_scoredis,player_scoredisrect)
 
-        #Update display at 32 frames per second
+        #Update display at set frames per second
         pygame.display.update()
         fpsclock.tick(fps)
 
@@ -269,7 +276,7 @@ def GameOver(horizontal, vertical, up_pipes, down_pipes):
             return True
 
         for pipe in down_pipes:
-            if (vertical + gameimgs['leo'].get_height()-2 > (pipe['y'])) and abs(horizontal - pipe['x']) < (gameimgs['pipe'][0].get_width()-50):
+            if (vertical + gameimgs['leo'].get_height()-2 > (pipe['y'])) and abs(horizontal - pipe['x']) < (gameimgs['pipe'][0].get_width()-5):
                 return True
         
         return False
@@ -297,17 +304,18 @@ if __name__ == "__main__":
     gameimgs['background'] = pygame.image.load(backgroundimg).convert_alpha()
     gameimgs['sea_lvl'] = pygame.image.load(seaimg).convert_alpha()
     gameimgs['leo'] = pygame.image.load(leoimg).convert_alpha()
+    gameimgs['explosion'] = pygame.image.load(explosion).convert_alpha()
 
 
     window.fill(black)
     start = bigfont.render("F L A P P Y   L E O",True, green)
     startrect = start.get_rect()
     startrect.center = (window_width // 2, window_height // 2)
-    startrect.top = 100
+    startrect.top = 125
     space = font.render("P R E S S   S P A C E   T O   S T A R T",True,white)
     spacerect = space.get_rect()
     spacerect.center = (window_width // 2, window_height // 2)
-    spacerect.top = 200
+    spacerect.top = 250
     window.blit(start,startrect) 
     pygame.display.update()
     time.sleep(0.5)
@@ -339,6 +347,8 @@ if __name__ == "__main__":
                     sys.exit()
 
                 elif event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
+                    flappygame()
+                elif event.type == MOUSEBUTTONUP:
                     flappygame()
 
                 else:
