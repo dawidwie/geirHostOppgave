@@ -20,17 +20,20 @@ def sql():
     result = int(player_score)
     playername = getPlayerName()
     
-    #Sends information
-    sequel= "insert into playerScore(player,score) values(%s, %s)"
-    val = (playername, result)
-    mycursor.execute(sequel,val)
-    my.commit()
+    #Sends information to database if score is higher than 0
+    if result > 0:
+
+        sequel= "insert into playerScore(player,score) values(%s, %s)"
+        val = (playername.strip(), result)
+        mycursor.execute(sequel,val)
+        my.commit()
 
     #fetches highscore list sorted by score
     mycursor.execute("select * from playerScore order by score desc")   
     scores = mycursor.fetchmany(size=10)
     window.fill(black)
 
+    #Displays player score
     scoredis = font.render("Y o u r   S c o r e",True,white)
     scoredisrect = scoredis.get_rect()
     scoredisrect.center = (window_width //2, window_height // 2)
@@ -56,12 +59,13 @@ def sql():
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
-        elif event.type == KEYDOWN:
-            if event.key == K_ESCAPE:
-                pygame.quit()
-                sys.exit()
-            if event.key == K_SPACE:
-                break
+        elif event.type == KEYDOWN and event.key == K_ESCAPE:
+            pygame.quit()
+            sys.exit()
+        elif event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
+            break
+
+
     #sets top height value and displays "TOP 10 HIGH SCORES" to game
     window.fill(black)
     topval = 70
@@ -101,12 +105,11 @@ def sql():
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
-        elif event.type == KEYDOWN:
-            if event.key == K_ESCAPE:
-                pygame.quit()
-                sys.exit()
-            if event.key == K_RETURN:
-                return
+        elif event.type == KEYDOWN and event.key == K_ESCAPE:
+            pygame.quit()
+            sys.exit()
+        elif event.type == KEYDOWN and event.key == K_RETURN:
+            break
                 
             
 
@@ -125,6 +128,8 @@ backgroundimg = 'images/background.jpg'
 leoimg = 'images/leo.jpg'
 seaimg = 'images/base.jfif'
 explosion = 'images/explosion2.png'
+explosion_sound = 'sounds/explosionSoun.mp3'
+leo_sound = 'sounds/leoSoun.mp3'
 gameimgs = {}
 elevation = window_height * 0.8
 player_score = 0
@@ -135,10 +140,10 @@ green = (163,252,84)
 
 def flappygame():
     #reset player score
-    global player_score, fps
+    global player_score
     player_score = 0
 
-    #set area variables
+    #set area and leo variables
     horizontal = window_height/5
     vertical = window_width/2
     ground = 0
@@ -174,21 +179,20 @@ def flappygame():
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 pygame.quit()
                 sys.exit()
-            elif event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
+            elif event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP) or event.type == MOUSEBUTTONDOWN:
                 if vertical > 0:
                     leo_velocity_y = leo_flap_vel
                     leo_flap = True
-            elif event.type == MOUSEBUTTONDOWN:
-                if vertical > 0:
-                    leo_velocity_y = leo_flap_vel
-                    leo_flap = True
-        
+                    pygame.mixer.Sound.play(jump)
+                    pygame.mixer.music.stop()
+
         #checks if player collisions happens
         gameover = GameOver(horizontal, vertical, uppipes, downpipes)
         if gameover:
             window.blit(gameimgs['explosion'],(horizontal-25, vertical-15))
             pygame.display.update()
-
+            pygame.mixer.Sound.play(crash)
+            pygame.mixer.music.stop()
             sql()
             return
 
@@ -288,6 +292,7 @@ if __name__ == "__main__":
     
     #initializes pygame modules
     pygame.init()
+    pygame.mixer.init()
     fpsclock = pygame.time.Clock()
 
     smallfont = pygame.font.Font('ARCADECLASSIC.TTF', 15)
@@ -299,14 +304,16 @@ if __name__ == "__main__":
     #sets name for game window
     pygame.display.set_caption('Flappy Leo Game')
 
-
+    #Loads game images and sound
     gameimgs['pipe'] = (pygame.transform.rotate(pygame.image.load(pipeimg).convert_alpha(),180), pygame.image.load(pipeimg).convert_alpha())
     gameimgs['background'] = pygame.image.load(backgroundimg).convert_alpha()
     gameimgs['sea_lvl'] = pygame.image.load(seaimg).convert_alpha()
     gameimgs['leo'] = pygame.image.load(leoimg).convert_alpha()
     gameimgs['explosion'] = pygame.image.load(explosion).convert_alpha()
+    jump = pygame.mixer.Sound(leo_sound)
+    crash = pygame.mixer.Sound(explosion_sound)
 
-
+    #Start screen for first game
     window.fill(black)
     start = bigfont.render("F L A P P Y   L E O",True, green)
     startrect = start.get_rect()
@@ -328,7 +335,7 @@ if __name__ == "__main__":
             pygame.quit()
             sys.exit()
         elif event.type == KEYDOWN:
-            if event.key == K_SPACE:
+            if event.key == K_SPACE:    
                 break
     
     pygame.event.clear()
@@ -338,7 +345,7 @@ if __name__ == "__main__":
         horizontal = window_width/5
         ground = 0
 
-
+        #Checks for user input and starts game if right input
         while True:
             for event in pygame.event.get(): 
                 
@@ -346,9 +353,7 @@ if __name__ == "__main__":
                     pygame.quit()
                     sys.exit()
 
-                elif event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
-                    flappygame()
-                elif event.type == MOUSEBUTTONUP:
+                elif event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP) or event.type == MOUSEBUTTONDOWN:
                     flappygame()
 
                 else:
@@ -358,4 +363,4 @@ if __name__ == "__main__":
 
                     pygame.display.update()
 
-                    fpsclock.tick(fps)
+                    fpsclock.tick(fps) 
