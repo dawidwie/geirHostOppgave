@@ -18,6 +18,9 @@ def sql():
 
     #sets score and name value
     result = int(player_score)
+    if result == 0:
+
+        return
     playername = getPlayerName()
     
     #Sends information to database if score is higher than 0
@@ -70,7 +73,7 @@ def sql():
     window.fill(black)
     topval = 70
     toplist = 1
-    highscore = highfont.render("T O P   1 0   H I G H   S C O R E S",True,white)
+    highscore = highfont.render("L E A D E R B O A R D",True,white)
     highscorerect = highscore.get_rect()
     highscorerect.center = (window_width // 2, window_height // 2)
     highscorerect.top = 10
@@ -124,14 +127,14 @@ window_height = 500
 window = pygame.display.set_mode((window_width,window_height))
 fps = 32
 pipeimg = 'images/pipeleo.jpg'
-backgroundimg = 'images/background.jpg'
+backgroundimg = 'images/backgroundleo.jpg'
 leoimg = 'images/leo.jpg'
-seaimg = 'images/base.jfif'
 explosion = 'images/explosion2.png'
 explosion_sound = 'sounds/explosionSoun.mp3'
 leo_sound = 'sounds/leoSoun.mp3'
+score_sound = 'sounds/scoreSoun.mp3'
 gameimgs = {}
-elevation = window_height * 0.8
+elevation = window_height
 player_score = 0
 white = (255,255,255)
 black = (0,0,0)
@@ -147,7 +150,7 @@ def flappygame():
     horizontal = window_height/5
     vertical = window_width/2
     ground = 0
-    tempheight = 100
+    tempheight = 0
 
     #create first obstacle
     firstpipe = createPipe()
@@ -169,7 +172,7 @@ def flappygame():
     leo_max_vel_y = 10
     leo_min_vel_y = -8
     leoAccY = 1
-    leo_flap_vel = -8
+    leo_flap_vel = -9
     leo_flap = False
 
 
@@ -190,18 +193,27 @@ def flappygame():
         gameover = GameOver(horizontal, vertical, uppipes, downpipes)
         if gameover:
             window.blit(gameimgs['explosion'],(horizontal-25, vertical-15))
+            gameovertext = bigfont.render("G A M E   O V E R", True, white)
+            gameovertext_rect = gameovertext.get_rect()
+            gameovertext_rect.center = (window_width // 2, window_height // 2)
+            gameovertext_rect.top = 40
+            window.blit(gameovertext,gameovertext_rect)
             pygame.display.update()
             pygame.mixer.Sound.play(crash)
             pygame.mixer.music.stop()
+            time.sleep(0.5)
             sql()
             return
 
         #Checks if player has passed a pipe
         playerMidPos = horizontal + gameimgs['leo'].get_width()/2
         for pipe in uppipes:
-            pipeMidPos = pipe['x'] + gameimgs['pipe'][0].get_width()/2
-            if pipeMidPos <= playerMidPos < pipeMidPos +4:
+            pipeMidPos = pipe['x'] + (gameimgs['pipe'][0].get_width()/2 - 2)
+            if pipeMidPos <= playerMidPos < pipeMidPos +4 :
                 player_score += 1
+                pygame.mixer.Sound.set_volume(scoreS, 0.2)
+                pygame.mixer.Sound.play(scoreS)
+                pygame.mixer.music.stop()
 
     
         if leo_velocity_y < leo_max_vel_y and not leo_flap:
@@ -234,7 +246,6 @@ def flappygame():
         for upperPipe, lowerPipe in zip(uppipes, downpipes):
             window.blit(gameimgs['pipe'][0], (upperPipe['x'], upperPipe['y']))
             window.blit(gameimgs['pipe'][1], (lowerPipe['x'], lowerPipe['y']))
-        window.blit(gameimgs['sea_lvl'], (ground,elevation))
         window.blit(gameimgs['leo'], (horizontal, vertical))
 
 
@@ -257,7 +268,7 @@ def flappygame():
 def createPipe():
     offset = window_height/3
     pipeheight = gameimgs['pipe'][0].get_height()
-    pipeY2 = offset + random.randrange(0, int(window_height - gameimgs['sea_lvl'].get_height() -1.2*offset))
+    pipeY2 = offset + random.randrange(0, int(window_height -1.2*offset))
     pipeX = window_width + 10
     pipeY1 = pipeheight - pipeY2 + offset
     pipe = [
@@ -307,11 +318,11 @@ if __name__ == "__main__":
     #Loads game images and sound
     gameimgs['pipe'] = (pygame.transform.rotate(pygame.image.load(pipeimg).convert_alpha(),180), pygame.image.load(pipeimg).convert_alpha())
     gameimgs['background'] = pygame.image.load(backgroundimg).convert_alpha()
-    gameimgs['sea_lvl'] = pygame.image.load(seaimg).convert_alpha()
     gameimgs['leo'] = pygame.image.load(leoimg).convert_alpha()
     gameimgs['explosion'] = pygame.image.load(explosion).convert_alpha()
     jump = pygame.mixer.Sound(leo_sound)
     crash = pygame.mixer.Sound(explosion_sound)
+    scoreS = pygame.mixer.Sound(score_sound)
 
     #Start screen for first game
     window.fill(black)
@@ -359,7 +370,6 @@ if __name__ == "__main__":
                 else:
                     window.blit(gameimgs['background'], (0,0))
                     window.blit(gameimgs['leo'], (horizontal, vertical))
-                    window.blit(gameimgs['sea_lvl'],(ground, elevation))
 
                     pygame.display.update()
 
