@@ -9,6 +9,9 @@ def getPlayerName() -> str:
     tk.destroy()
     if playerName is None:
         playerName = "ANONYMOUS"
+    
+    if playerName.strip() == "":
+        playerName = "ANONYMOUS"
     return playerName
 
 def sql():
@@ -36,7 +39,7 @@ def sql():
     scores = mycursor.fetchmany(size=10)
     window.fill(black)
 
-    #Displays player score
+    #Displays player score  
     scoredis = font.render("Y o u r   S c o r e",True,white)
     scoredisrect = scoredis.get_rect()
     scoredisrect.center = (window_width //2, window_height // 2)
@@ -128,7 +131,8 @@ window = pygame.display.set_mode((window_width,window_height))
 fps = 32
 pipeimg = 'images/pipeleo.jpg'
 backgroundimg = 'images/backgroundleo.jpg'
-leoimg = 'images/leo.jpg'
+leoimg = 'images/leocrop.png'
+leosmileimg = 'images/leosmilecrop.png'
 explosion = 'images/explosion2.png'
 explosion_sound = 'sounds/explosionSoun.mp3'
 leo_sound = 'sounds/leoSoun.mp3'
@@ -172,8 +176,9 @@ def flappygame():
     leo_max_vel_y = 10
     leo_min_vel_y = -8
     leoAccY = 1
-    leo_flap_vel = -9
+    leo_flap_vel = -8.5
     leo_flap = False
+    leo_smile_check = 0
 
 
     while True:
@@ -192,7 +197,7 @@ def flappygame():
         #checks if player collisions happens
         gameover = GameOver(horizontal, vertical, uppipes, downpipes)
         if gameover:
-            window.blit(gameimgs['explosion'],(horizontal-25, vertical-15))
+            window.blit(gameimgs['explosion'],(horizontal-30, vertical-10))
             gameovertext = bigfont.render("G A M E   O V E R", True, white)
             gameovertext_rect = gameovertext.get_rect()
             gameovertext_rect.center = (window_width // 2, window_height // 2)
@@ -221,6 +226,7 @@ def flappygame():
         
         
         if leo_flap:
+            leo_smile_check = 10
             leo_flap = False
         playerHeight = gameimgs['leo'].get_height()
         vertical = vertical + min(leo_velocity_y, elevation - vertical - playerHeight)
@@ -246,7 +252,10 @@ def flappygame():
         for upperPipe, lowerPipe in zip(uppipes, downpipes):
             window.blit(gameimgs['pipe'][0], (upperPipe['x'], upperPipe['y']))
             window.blit(gameimgs['pipe'][1], (lowerPipe['x'], lowerPipe['y']))
-        window.blit(gameimgs['leo'], (horizontal, vertical))
+        if leo_smile_check > 0:
+            window.blit(gameimgs['leosmile'], (horizontal,vertical))
+        else:
+            window.blit(gameimgs['leo'], (horizontal, vertical))
 
 
         #Draw score to screen
@@ -260,6 +269,7 @@ def flappygame():
             player_scoredisrect.right = 566
         window.blit(player_scoredis,player_scoredisrect)
 
+        leo_smile_check -= 1
         #Update display at set frames per second
         pygame.display.update()
         fpsclock.tick(fps)
@@ -282,16 +292,16 @@ def createPipe():
 
 #checks for collision and returns True if true
 def GameOver(horizontal, vertical, up_pipes, down_pipes):
-    if vertical > elevation-25 or vertical < 0:
+    if vertical > elevation-45 or vertical < 0:
         return True
     
     for pipe in up_pipes:
         pipeHeight = gameimgs['pipe'][0].get_height()
-        if (vertical < (pipeHeight + pipe['y']-2 ) and abs(horizontal - pipe['x']) < (gameimgs['pipe'][0].get_width()-5)):
+        if (vertical < (pipeHeight + pipe['y']-2 ) and abs(horizontal - pipe['x']) < (gameimgs['pipe'][0].get_width()-10)):
             return True
 
         for pipe in down_pipes:
-            if (vertical + gameimgs['leo'].get_height()-2 > (pipe['y'])) and abs(horizontal - pipe['x']) < (gameimgs['pipe'][0].get_width()-5):
+            if (vertical + gameimgs['leo'].get_height()-2 > (pipe['y'])) and abs(horizontal - pipe['x']) < (gameimgs['pipe'][0].get_width()-10):
                 return True
         
         return False
@@ -319,6 +329,7 @@ if __name__ == "__main__":
     gameimgs['pipe'] = (pygame.transform.rotate(pygame.image.load(pipeimg).convert_alpha(),180), pygame.image.load(pipeimg).convert_alpha())
     gameimgs['background'] = pygame.image.load(backgroundimg).convert_alpha()
     gameimgs['leo'] = pygame.image.load(leoimg).convert_alpha()
+    gameimgs['leosmile'] = pygame.image.load(leosmileimg).convert_alpha()
     gameimgs['explosion'] = pygame.image.load(explosion).convert_alpha()
     jump = pygame.mixer.Sound(leo_sound)
     crash = pygame.mixer.Sound(explosion_sound)
