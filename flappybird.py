@@ -1,6 +1,7 @@
 import pygame, sys, random, mysql.connector, tkinter, tkinter.simpledialog, time
 from pygame.locals import *
 
+
 # Displays dialouge box that gets player name
 def getPlayerName() -> str:
     tk = tkinter.Tk()
@@ -15,107 +16,133 @@ def getPlayerName() -> str:
     return playerName
 
 def sql():
-    #Connects to database
-    my = mysql.connector.connect(host="localhost", user="root", password="password", database="flappybird")
-    mycursor = my.cursor()
 
     #sets score and name value
     result = int(player_score)
+
     if result == 0:
-
         return
-    playername = getPlayerName()
-    
-    #Sends information to database if score is higher than 0
-    if result > 0:
 
-        sequel= "insert into playerScore(player,score) values(%s, %s)"
-        val = (playername.strip(), result)
-        mycursor.execute(sequel,val)
-        my.commit()
-
-    #fetches highscore list sorted by score
-    mycursor.execute("select * from playerScore order by score desc")   
-    scores = mycursor.fetchmany(size=10)
-    window.fill(black)
-
-    #Displays player score  
-    scoredis = font.render("Y o u r   S c o r e",True,white)
-    scoredisrect = scoredis.get_rect()
-    scoredisrect.center = (window_width //2, window_height // 2)
-    scoredisrect.top = 70
-    scoreshow = bigfont.render(str(result), True, white)
-    scoreshowrect = scoreshow.get_rect()
-    scoreshowrect.center = (window_width //2, window_height // 2)
-    scoreshowrect.top = 150
-    continuetxt = enterfont.render("P R E S S   S P A C E   T O   C O N T I N U E",True,white)
-    continuetxtrect = continuetxt.get_rect()
-    continuetxtrect.left = 20
-    continuetxtrect.bottom = 490
-    window.blit(scoredis,scoredisrect)
-    window.blit(scoreshow,scoreshowrect)
-    pygame.display.update()
-    time.sleep(0.2)
-    window.blit(continuetxt,continuetxtrect)
-    pygame.display.update()
-
-    pygame.event.clear()
-    while True:
-        event = pygame.event.wait()
-        if event.type == QUIT:
-            pygame.quit()
-            sys.exit()
-        elif event.type == KEYDOWN and event.key == K_ESCAPE:
-            pygame.quit()
-            sys.exit()
-        elif event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
-            break
+    #Connects to database
+    try:
+        my = mysql.connector.connect(host="localhost", user="root", password="password", database="flappybird")
+        mycursor = my.cursor()
 
 
-    #sets top height value and displays "TOP 10 HIGH SCORES" to game
-    window.fill(black)
-    topval = 70
-    toplist = 1
-    highscore = highfont.render("L E A D E R B O A R D",True,white)
-    highscorerect = highscore.get_rect()
-    highscorerect.center = (window_width // 2, window_height // 2)
-    highscorerect.top = 10
-    window.blit(highscore,highscorerect)
-
-    #Displays top 10 scores
-    for row in scores:
-        scorekey = row[1].strip()
-        scoreval = row[2]
-        scoreIn = f"{str(toplist)}  {scorekey}  {scoreval}"
-        text = font.render(scoreIn,True,white)
-        textrect= text.get_rect()
-        textrect.center = (window_width // 2, window_height // 2)
-        textrect.top = topval
-        window.blit(text,textrect)
         
-        topval += 35
-        toplist += 1
-    pygame.display.update()
-    enterwait = enterfont.render("P R E S S   E N T E R   T O   S T A R T   N E W   G A M E ", True, white)
-    enterwaitrect = enterwait.get_rect()
+        #Sends information to database if score is higher than 0
+        if result > 0:
+            playername = getPlayerName()
+            sequel= "insert into playerScore(player,score) values(%s, %s)"
+            val = (playername.strip(), result)
+            mycursor.execute(sequel,val)
+            my.commit()
 
-    enterwaitrect.right = 375
-    enterwaitrect.bottom = 490
-    time.sleep(0.2)
-    window.blit(enterwait,enterwaitrect)
-    pygame.display.update()
+        #fetches highscore list sorted by score
+        mycursor.execute("select * from playerScore order by score desc")   
+        scores = mycursor.fetchmany(size=10)
 
-    pygame.event.clear()
-    while True:
-        event = pygame.event.wait()
-        if event.type == QUIT:
-            pygame.quit()
-            sys.exit()
-        elif event.type == KEYDOWN and event.key == K_ESCAPE:
-            pygame.quit()
-            sys.exit()
-        elif event.type == KEYDOWN and event.key == K_RETURN:
-            break
+
+        #Displays player score  
+        window.fill(black)
+        scoredis = font.render("Your Score",True,white)
+        scoredisrect = scoredis.get_rect()
+        scoredisrect.center = (window_width //2, window_height // 2)
+        scoredisrect.top = 70
+        scoreshow = bigfont.render(str(result), True, white)
+        scoreshowrect = scoreshow.get_rect()
+        scoreshowrect.center = (window_width //2, window_height // 2)
+        scoreshowrect.top = 150
+        continuetxt = enterfont.render("PRESS SPACE TO CONTINUE",True,white)
+        continuetxtrect = continuetxt.get_rect()
+        continuetxtrect.left = 20
+        continuetxtrect.bottom = 490
+        window.blit(scoredis,scoredisrect)
+        window.blit(scoreshow,scoreshowrect)
+        pygame.display.update()
+        time.sleep(0.2)
+        window.blit(continuetxt,continuetxtrect)
+        pygame.display.update()
+
+        pygame.event.clear()
+        while True:
+            event = pygame.event.wait()
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == KEYDOWN and event.key == K_ESCAPE:
+                pygame.quit()
+                sys.exit()
+            elif event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
+                break
+
+
+        #sets top height value and displays "TOP 10 HIGH SCORES" to game
+        window.fill(black)
+        topval = 70
+        toplist = 1
+        highscore = highfont.render("LEADERBOARD",True,white)
+        highscorerect = highscore.get_rect()
+        highscorerect.center = (window_width // 2, window_height // 2)
+        highscorerect.top = 10
+        window.blit(highscore,highscorerect)
+
+        #Displays top 10 scores
+        for row in scores:
+            scorekey = row[1].strip()
+            scoreval = row[2]
+            scoreIn = f"{str(toplist)}:{scorekey} {scoreval}"
+            text = font.render(scoreIn,True,white)
+            textrect= text.get_rect()
+            textrect.center = (window_width // 2, window_height // 2)
+            textrect.top = topval
+            window.blit(text,textrect)
+            
+            topval += 35
+            toplist += 1
+        pygame.display.update()
+        enterwait = enterfont.render("PRESS ENTER TO START NEW GAME", True, white)
+        enterwaitrect = enterwait.get_rect()
+
+        enterwaitrect.right = 375
+        enterwaitrect.bottom = 490
+        time.sleep(0.2)
+        window.blit(enterwait,enterwaitrect)
+        pygame.display.update()
+
+        pygame.event.clear()
+        while True:
+            event = pygame.event.wait()
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == KEYDOWN and event.key == K_ESCAPE:
+                pygame.quit()
+                sys.exit()
+            elif event.type == KEYDOWN and event.key == K_RETURN:
+                break
+    except:
+        #Displays player score  
+        window.fill(black)
+        scoredis = font.render("Your Score",True,white)
+        scoredisrect = scoredis.get_rect()
+        scoredisrect.center = (window_width //2, window_height // 2)
+        scoredisrect.top = 70
+        scoreshow = bigfont.render(str(result), True, white)
+        scoreshowrect = scoreshow.get_rect()
+        scoreshowrect.center = (window_width //2, window_height // 2)
+        scoreshowrect.top = 150
+        continuetxt = enterfont.render("PRESS SPACE TO CONTINUE",True,white)
+        continuetxtrect = continuetxt.get_rect()
+        continuetxtrect.left = 20
+        continuetxtrect.bottom = 490
+        window.blit(scoredis,scoredisrect)
+        window.blit(scoreshow,scoreshowrect)
+        pygame.display.update()
+        time.sleep(0.2)
+        window.blit(continuetxt,continuetxtrect)
+        pygame.display.update()
+        print("Connection to database unsuccessfull")
                 
             
 
@@ -137,6 +164,8 @@ explosion = 'images/explosion2.png'
 explosion_sound = 'sounds/explosionSoun.mp3'
 leo_sound = 'sounds/leoSoun.mp3'
 score_sound = 'sounds/scoreSoun.mp3'
+poland = 'sounds/poland.mp3'
+defaultfont = 'font.ttf'
 gameimgs = {}
 elevation = window_height
 player_score = 0
@@ -149,6 +178,8 @@ def flappygame():
     #reset player score
     global player_score
     player_score = 0
+
+    pygame.mixer.music.play(-1,0.0)    
 
     #set area and leo variables
     horizontal = window_height/5
@@ -192,13 +223,12 @@ def flappygame():
                     leo_velocity_y = leo_flap_vel
                     leo_flap = True
                     pygame.mixer.Sound.play(jump)
-                    pygame.mixer.music.stop()
 
         #checks if player collisions happens
         gameover = GameOver(horizontal, vertical, uppipes, downpipes)
         if gameover:
             window.blit(gameimgs['explosion'],(horizontal-30, vertical-10))
-            gameovertext = bigfont.render("G A M E   O V E R", True, white)
+            gameovertext = bigfont.render("GAME OVER", True, white)
             gameovertext_rect = gameovertext.get_rect()
             gameovertext_rect.center = (window_width // 2, window_height // 2)
             gameovertext_rect.top = 40
@@ -216,9 +246,8 @@ def flappygame():
             pipeMidPos = pipe['x'] + (gameimgs['pipe'][0].get_width()/2 - 2)
             if pipeMidPos <= playerMidPos < pipeMidPos +4 :
                 player_score += 1
-                pygame.mixer.Sound.set_volume(scoreS, 0.2)
                 pygame.mixer.Sound.play(scoreS)
-                pygame.mixer.music.stop()
+
 
     
         if leo_velocity_y < leo_max_vel_y and not leo_flap:
@@ -316,11 +345,11 @@ if __name__ == "__main__":
     pygame.mixer.init()
     fpsclock = pygame.time.Clock()
 
-    smallfont = pygame.font.Font('ARCADECLASSIC.TTF', 15)
-    font = pygame.font.Font('ARCADECLASSIC.TTF', 28)
-    highfont = pygame.font.Font('ARCADECLASSIC.TTF', 40)
-    enterfont = pygame.font.Font('ARCADECLASSIC.TTF', 20)
-    bigfont = pygame.font.Font('ARCADECLASSIC.TTF', 60)
+    smallfont = pygame.font.Font(defaultfont, 10)
+    font = pygame.font.Font(defaultfont, 20)
+    highfont = pygame.font.Font(defaultfont, 30)
+    enterfont = pygame.font.Font(defaultfont, 15)
+    bigfont = pygame.font.Font(defaultfont, 50)
 
     #sets name for game window
     pygame.display.set_caption('Flappy Leo Game')
@@ -334,14 +363,19 @@ if __name__ == "__main__":
     jump = pygame.mixer.Sound(leo_sound)
     crash = pygame.mixer.Sound(explosion_sound)
     scoreS = pygame.mixer.Sound(score_sound)
+    pygame.mixer.Sound.set_volume(scoreS, 0.2)
+    pygame.mixer.Sound.set_volume(jump,0.5)
+    polandTrack = pygame.mixer.music.load(poland)
+    pygame.mixer.music.set_volume(0.2)
+
 
     #Start screen for first game
     window.fill(black)
-    start = bigfont.render("F L A P P Y   L E O",True, green)
+    start = bigfont.render("FLAPPY LEO",True, green)
     startrect = start.get_rect()
     startrect.center = (window_width // 2, window_height // 2)
     startrect.top = 125
-    space = font.render("P R E S S   S P A C E   T O   S T A R T",True,white)
+    space = font.render("PRESS SPACE TO START",True,white)
     spacerect = space.get_rect()
     spacerect.center = (window_width // 2, window_height // 2)
     spacerect.top = 250
@@ -360,11 +394,12 @@ if __name__ == "__main__":
             if event.key == K_SPACE:    
                 break
     
+
     pygame.event.clear()
     while True:
         #sets variables for collision and leo placement
-        vertical = (window_height - gameimgs['leo'].get_height())/2
-        horizontal = window_width/5
+        vertical = window_width/2
+        horizontal = window_height/5
         ground = 0
 
         #Checks for user input and starts game if right input

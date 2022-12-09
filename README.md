@@ -31,14 +31,16 @@ Programmet jobber med python og mysql
 
 
  
-2.	Rammer 
+2. Rammer 
+
 2.1	Hvilke lover og forskrifter løsningen skal forholde seg til. 
 Systemet lagrer ikke personlig informasjon og trenger derfor ikke å forholde seg til lover
 
 
 
  
-3.	Systembeskrivelse 
+3. Systembeskrivelse 
+
 3.1	Versjon.
 Commit: f5df54cf20eb7f4e003cba48ec41ee385afa6173
 
@@ -58,7 +60,8 @@ Python 3.11
 
  
  
-4.	Kontroller i og rundt IT-systemet 
+4. Kontroller i og rundt IT-systemet 
+
 4.1	Enkel risikovurdering av IT-systemets konfidensialitet, integritet og tilgjengelighet.
 Systemet lagrer ikke personlig informasjon om spiller
 
@@ -67,13 +70,15 @@ Systemet lagrer ikke personlig informasjon om spiller
 
  
  
-5.	Driftsmessige krav og ressurser. 
+5. Driftsmessige krav og ressurser. 
+
 5.1	Maskinvare. 
 Minumum krav: Raspberry Pi 1.
 
  
- 
-6.	Systembenyttede standarder 
+
+6. Systembenyttede standarder 
+
 6.1	Verktøystandarder (en beskrivelse av regler for hvilke og hvordan verktøy skal brukes når løsning lages) 
 
 6.2	Spesifikasjonsstandarder. (En beskrivelse av regler for hvordan funksjoner, programmer, data og dokumenter skal beskrives.) 
@@ -88,7 +93,8 @@ Minumum krav: Raspberry Pi 1.
 
  
  
-7.	Systemforvaltning (vedlikehold og videreutvikling) 
+7. Systemforvaltning (vedlikehold og videreutvikling) 
+
 7.1	Rutiner for systemforvaltning. 
 
 7.2	Rutiner for konfigurasjonsstyring av kode. 
@@ -107,7 +113,8 @@ Minumum krav: Raspberry Pi 1.
 
  
  
-8.	Programdokumentasjon 
+8. Programdokumentasjon 
+
 8.1	Det er viktig med flittig bruk av kommentarer i programkoden for å gjøre denne lettere å forstå. Et minimum er å forklare programmets funksjon, variabler, behandlingsregler og avhengighet av/ påvirkning på andre programmer. 
 
 8.2	Hvem som har programmert (både opprinnelig og eventuelle endringer), dato og versjon. 
@@ -116,7 +123,8 @@ meg
 
  
  
-9.	Kjente feil og mangler 
+9. Kjente feil og mangler 
+
 9.1	Oversikt over FAQ og kjente feil og mangler med beskrivelse av mulige løsninger – primært for brukere/brukerstøttefunksjon og driftspersonell.
 
  
