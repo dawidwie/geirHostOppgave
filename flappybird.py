@@ -17,26 +17,22 @@ def getPlayerName() -> str:
 
 def sql():
 
-    #sets score and name value
-    result = int(playerscore)
-
-    if result == 0:
+    #Returns to game screen if playerscore is 0
+    if playerscore == 0:
         return
 
-    #Connects to database
+    #Else connects to database
     try:
         my = mysql.connector.connect(host="localhost", user="root", password="password", database="flappybird")
         mycursor = my.cursor()
 
 
-        
-        #Sends information to database if score is higher than 0
-        if result > 0:
-            playername = getPlayerName()
-            sequel= "insert into playerScore(player,score) values(%s, %s)"
-            val = (playername.strip(), result)
-            mycursor.execute(sequel,val)
-            my.commit()
+        #Sends game information to database
+        playername = getPlayerName()
+        sequel= "insert into playerScore(player,score) values(%s, %s)"
+        val = (playername.strip(), playerscore)
+        mycursor.execute(sequel,val)
+        my.commit()
 
         #fetches highscore list sorted by score
         mycursor.execute("select * from playerScore order by score desc")   
@@ -49,7 +45,7 @@ def sql():
         scoredisrect = scoredis.get_rect()
         scoredisrect.center = (windowwidth //2, windowheight // 2)
         scoredisrect.top = 70
-        scoreshow = bigfont.render(str(result), True, white)
+        scoreshow = bigfont.render(str(playerscore), True, white)
         scoreshowrect = scoreshow.get_rect()
         scoreshowrect.center = (windowwidth //2, windowheight // 2)
         scoreshowrect.top = 150
@@ -64,6 +60,7 @@ def sql():
         window.blit(continuetxt,continuetxtrect)
         pygame.display.update()
 
+        #waits for user input to go to next screen
         pygame.event.clear()
         while True:
             event = pygame.event.wait()
@@ -103,13 +100,13 @@ def sql():
         pygame.display.update()
         enterwait = enterfont.render("PRESS ENTER TO START NEW GAME", True, white)
         enterwaitrect = enterwait.get_rect()
-
         enterwaitrect.right = 375
         enterwaitrect.bottom = 490
         time.sleep(0.2)
         window.blit(enterwait,enterwaitrect)
         pygame.display.update()
 
+        #Ends function if user input is correct
         pygame.event.clear()
         while True:
             event = pygame.event.wait()
@@ -122,13 +119,13 @@ def sql():
             elif event.type == KEYDOWN and event.key == K_RETURN:
                 break
     except:
-        #Displays player score  
+        #Displays only player score if connection to database is not made
         window.fill(black)
         scoredis = font.render("Your Score",True,white)
         scoredisrect = scoredis.get_rect()
         scoredisrect.center = (windowwidth //2, windowheight // 2)
         scoredisrect.top = 70
-        scoreshow = bigfont.render(str(result), True, white)
+        scoreshow = bigfont.render(str(playerscore), True, white)
         scoreshowrect = scoreshow.get_rect()
         scoreshowrect.center = (windowwidth //2, windowheight // 2)
         scoreshowrect.top = 150
@@ -151,7 +148,7 @@ def sql():
     
 
 
-#setting up variables
+#set up basic variables
 windowwidth = 600
 windowheight = 500
 window = pygame.display.set_mode((windowwidth,windowheight))
@@ -162,8 +159,8 @@ leoimg = 'images/leocrop.png'
 leosmileimg = 'images/leosmilecrop.png'
 explosion = 'images/explosion2.png'
 explosion_sound = 'sounds/explosionSoun.mp3'
-leo_sound = 'sounds/leoSoun.mp3'
-score_sound = 'sounds/scoreSoun.mp3'
+leosound = 'sounds/leoSoun.mp3'
+scoresound = 'sounds/scoreSoun.mp3'
 poland = 'sounds/poland.mp3'
 defaultfont = 'font.ttf'
 gameimgs = {}
@@ -179,6 +176,7 @@ def flappygame():
     global playerscore
     playerscore = 0
 
+    #plays game music
     pygame.mixer.music.play(-1,0.0)    
 
     #set area and leo variables
@@ -212,8 +210,9 @@ def flappygame():
     leo_smile_check = 0
 
 
+
     while True:
-        #checks for user input
+        #checks for user input and gives velocity to player if correct
         for event in pygame.event.get():
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 pygame.quit()
@@ -253,14 +252,14 @@ def flappygame():
         if leo_velocity_y < leo_max_vel_y and not leo_flap:
             leo_velocity_y += leoAccY
         
-        
+        #Checks if player input is sent and resets bool value if true
         if leo_flap:
             leo_smile_check = 10
             leo_flap = False
         playerHeight = gameimgs['leo'].get_height()
         vertical = vertical + min(leo_velocity_y, elevation - vertical - playerHeight)
 
-
+        #Sets velocity for pipes
         for upperPipe, lowerPipe in zip(uppipes, downpipes):
             upperPipe['x'] += pipeVelx
             lowerPipe['x'] += pipeVelx
@@ -299,6 +298,7 @@ def flappygame():
         window.blit(playerscoredis,playerscoredisrect)
 
         leo_smile_check -= 1
+
         #Update display at set frames per second
         pygame.display.update()
         fpsclock.tick(fps)
@@ -360,9 +360,9 @@ if __name__ == "__main__":
     gameimgs['leo'] = pygame.image.load(leoimg).convert_alpha()
     gameimgs['leosmile'] = pygame.image.load(leosmileimg).convert_alpha()
     gameimgs['explosion'] = pygame.image.load(explosion).convert_alpha()
-    jump = pygame.mixer.Sound(leo_sound)
+    jump = pygame.mixer.Sound(leosound)
     crash = pygame.mixer.Sound(explosion_sound)
-    scoreS = pygame.mixer.Sound(score_sound)
+    scoreS = pygame.mixer.Sound(scoresound)
     pygame.mixer.Sound.set_volume(scoreS, 0.2)
     pygame.mixer.Sound.set_volume(jump,0.5)
     polandTrack = pygame.mixer.music.load(poland)

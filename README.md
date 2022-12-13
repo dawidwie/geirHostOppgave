@@ -10,22 +10,7 @@ Systemet er brukt til å spille et spill som ligner "Flappy Bird"
 1.2 Hvordan det fungerer.
 Systemet fungerer med å ta imot input fra spiller som forandrer posisjon på spillfiguren, samtidig som spillfiguren må unngå hindringer som blir tegnet til spillet med tilfeldig høyde
 
-1.3 Hvem som er ansvarlig for å oppdatere systemdokumentasjon
-meg
-
-1.4	Hvem som er Systemansvarlig. 
-meg
-
-1.5	Hvem som er Systemeier. 
-meg
-
-1.6	Hvem som er ansvarlig for drift og vedlikehold av systemet. 
-meg
-
-1.7	Hvem som skal bruke systemet. 
-meg
-
-1.8	Hvilke andre systemer løsningen jobber med. Inndata og utdata 
+1.3	Hvilke andre systemer løsningen jobber med. Inndata og utdata 
 Programmet jobber med python og mysql
  
 
@@ -42,8 +27,7 @@ Systemet lagrer ikke personlig informasjon og trenger derfor ikke å forholde se
 3. Systembeskrivelse 
 
 3.1	Versjon.
-Commit: f5df54cf20eb7f4e003cba48ec41ee385afa6173
-
+Commit: 0974537
 3.2	En beskrivelse av grensesnitt mot andre IT-systemer, manuelle eller maskinelle, som angir type, format og på import- og eksportdata. 
 systemet sender ut en string verdi og en int verdi til databasen
 
@@ -69,7 +53,6 @@ Systemet lagrer ikke personlig informasjon om spiller
 
 
  
- 
 5. Driftsmessige krav og ressurser. 
 
 5.1	Maskinvare. 
@@ -79,54 +62,32 @@ Minumum krav: Raspberry Pi 1.
 
 6. Systembenyttede standarder 
 
-6.1	Verktøystandarder (en beskrivelse av regler for hvilke og hvordan verktøy skal brukes når løsning lages) 
-
-6.2	Spesifikasjonsstandarder. (En beskrivelse av regler for hvordan funksjoner, programmer, data og dokumenter skal beskrives.) 
-
-6.3	Programmeringsstandarder. (En beskrivelse av regler for hvordan programmeringen skal utføres.) 
+6.1	Verktøystandarder 
+Python 3.11
 
 6.4	Brukergrensesnitt. (En beskrivelse av regler for oppbygging av skjermbilde og meny, hva en kommando utfører, standard betydning av tastene på tastaturet, fellestrekk ved dialogene etc.) 
+bruker tar i bruk en pygame UI, knapper som kan bli brukt er ESC, ENTER, KEYUP, SPACE og MOUSEBUTTONDOWN
 
-6.5	Navnestandarder variabler. (En beskrivelse av hvordan navn er bygget opp. Dette er standarder som skal sikre at navn er entydige og at alle forekomster bare har ett navn. I tillegg er det regler for generering av navn, som skal sikre at navn er logiske.) 
+6.5	Navnestandarder variabler.
+Variabler er beskrivende og er skrevet i ett ord uten understrek
 
 6.7	Avvik, begrunnelse for avvik fra gjeldende standard(er). 
+Variabler for velocity av spillfigur inneholder understrek, dersom navnet ble langt og ulesbart.
+ 
 
  
  
-7. Systemforvaltning (vedlikehold og videreutvikling) 
-
-7.1	Rutiner for systemforvaltning. 
-
-7.2	Rutiner for konfigurasjonsstyring av kode. 
-
-7.3	Rutiner for melding, registrering og oppfølging av endringsforslag. 
-
-7.4	Rutiner for konsekvensvurdering og prioritering av endringsforslag og bestilling av endringer. 
-
-7.5	Plan og miljø for testing, testgruppesammensetting, testdata og forventede testresultater. 
-
-7.6	Rutine for godkjenning og driftssetting av endringer og oppdatering av system-, bruker- og driftsdokumentasjon. 
-
-7.7	Rutine for informering av berørte om implementerte endringer. 
-
-7.8	Bibliotekrutiner. 
-
- 
- 
-8. Programdokumentasjon 
+7. Programdokumentasjon 
 
 8.1	Det er viktig med flittig bruk av kommentarer i programkoden for å gjøre denne lettere å forstå. Et minimum er å forklare programmets funksjon, variabler, behandlingsregler og avhengighet av/ påvirkning på andre programmer. 
 
-8.2	Hvem som har programmert (både opprinnelig og eventuelle endringer), dato og versjon. 
-meg
+
 
 
  
  
-9. Kjente feil og mangler 
+8. Kjente feil og mangler 
 
 9.1	Oversikt over FAQ og kjente feil og mangler med beskrivelse av mulige løsninger – primært for brukere/brukerstøttefunksjon og driftspersonell.
-
- 
-
-
+For å hente navn av spiller brukte jeg først en input funksjon, men dette fikk pygame til å fryse opp. 
+Jeg fant en erstatning for det, som var TKinter. TKinter sendte ut en dialogboks istedenfor, som fikk pygame til å fortsette å kjøre
