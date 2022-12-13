@@ -18,7 +18,7 @@ def getPlayerName() -> str:
 def sql():
 
     #sets score and name value
-    result = int(player_score)
+    result = int(playerscore)
 
     if result == 0:
         return
@@ -47,11 +47,11 @@ def sql():
         window.fill(black)
         scoredis = font.render("Your Score",True,white)
         scoredisrect = scoredis.get_rect()
-        scoredisrect.center = (window_width //2, window_height // 2)
+        scoredisrect.center = (windowwidth //2, windowheight // 2)
         scoredisrect.top = 70
         scoreshow = bigfont.render(str(result), True, white)
         scoreshowrect = scoreshow.get_rect()
-        scoreshowrect.center = (window_width //2, window_height // 2)
+        scoreshowrect.center = (windowwidth //2, windowheight // 2)
         scoreshowrect.top = 150
         continuetxt = enterfont.render("PRESS SPACE TO CONTINUE",True,white)
         continuetxtrect = continuetxt.get_rect()
@@ -83,7 +83,7 @@ def sql():
         toplist = 1
         highscore = highfont.render("LEADERBOARD",True,white)
         highscorerect = highscore.get_rect()
-        highscorerect.center = (window_width // 2, window_height // 2)
+        highscorerect.center = (windowwidth // 2, windowheight // 2)
         highscorerect.top = 10
         window.blit(highscore,highscorerect)
 
@@ -94,7 +94,7 @@ def sql():
             scoreIn = f"{str(toplist)}:{scorekey} {scoreval}"
             text = font.render(scoreIn,True,white)
             textrect= text.get_rect()
-            textrect.center = (window_width // 2, window_height // 2)
+            textrect.center = (windowwidth // 2, windowheight // 2)
             textrect.top = topval
             window.blit(text,textrect)
             
@@ -126,11 +126,11 @@ def sql():
         window.fill(black)
         scoredis = font.render("Your Score",True,white)
         scoredisrect = scoredis.get_rect()
-        scoredisrect.center = (window_width //2, window_height // 2)
+        scoredisrect.center = (windowwidth //2, windowheight // 2)
         scoredisrect.top = 70
         scoreshow = bigfont.render(str(result), True, white)
         scoreshowrect = scoreshow.get_rect()
-        scoreshowrect.center = (window_width //2, window_height // 2)
+        scoreshowrect.center = (windowwidth //2, windowheight // 2)
         scoreshowrect.top = 150
         continuetxt = enterfont.render("PRESS SPACE TO CONTINUE",True,white)
         continuetxtrect = continuetxt.get_rect()
@@ -152,9 +152,9 @@ def sql():
 
 
 #setting up variables
-window_width = 600
-window_height = 500
-window = pygame.display.set_mode((window_width,window_height))
+windowwidth = 600
+windowheight = 500
+window = pygame.display.set_mode((windowwidth,windowheight))
 fps = 32
 pipeimg = 'images/pipeleo.jpg'
 backgroundimg = 'images/backgroundleo.jpg'
@@ -167,8 +167,8 @@ score_sound = 'sounds/scoreSoun.mp3'
 poland = 'sounds/poland.mp3'
 defaultfont = 'font.ttf'
 gameimgs = {}
-elevation = window_height
-player_score = 0
+elevation = windowheight
+playerscore = 0
 white = (255,255,255)
 black = (0,0,0)
 green = (163,252,84)
@@ -176,14 +176,14 @@ green = (163,252,84)
 
 def flappygame():
     #reset player score
-    global player_score
-    player_score = 0
+    global playerscore
+    playerscore = 0
 
     pygame.mixer.music.play(-1,0.0)    
 
     #set area and leo variables
-    horizontal = window_height/5
-    vertical = window_width/2
+    horizontal = windowheight/5
+    vertical = windowwidth/2
     ground = 0
     tempheight = 0
 
@@ -192,13 +192,13 @@ def flappygame():
     secondpipe = createPipe()
 
     downpipes = [
-        {'x' : window_width+300-tempheight, 'y': firstpipe[1]['y']},
-        {'x' : window_width+300-tempheight+(window_width/2),'y': secondpipe[1]['y']}
+        {'x' : windowwidth+300-tempheight, 'y': firstpipe[1]['y']},
+        {'x' : windowwidth+300-tempheight+(windowwidth/2),'y': secondpipe[1]['y']}
     ]
     
     uppipes = [
-        {'x' : window_width+300-tempheight, 'y': firstpipe[0]['y']},
-        {'x' : window_width+200-tempheight+(window_width/2),'y': secondpipe[0]['y']}       
+        {'x' : windowwidth+300-tempheight, 'y': firstpipe[0]['y']},
+        {'x' : windowwidth+200-tempheight+(windowwidth/2),'y': secondpipe[0]['y']}       
     ]
 
     #set variables for pipes and leo
@@ -229,10 +229,10 @@ def flappygame():
         if gameover:
             window.blit(gameimgs['explosion'],(horizontal-30, vertical-10))
             gameovertext = bigfont.render("GAME OVER", True, white)
-            gameovertext_rect = gameovertext.get_rect()
-            gameovertext_rect.center = (window_width // 2, window_height // 2)
-            gameovertext_rect.top = 40
-            window.blit(gameovertext,gameovertext_rect)
+            gameovertextrect = gameovertext.get_rect()
+            gameovertextrect.center = (windowwidth // 2, windowheight // 2)
+            gameovertextrect.top = 40
+            window.blit(gameovertext,gameovertextrect)
             pygame.display.update()
             pygame.mixer.Sound.play(crash)
             pygame.mixer.music.stop()
@@ -245,7 +245,7 @@ def flappygame():
         for pipe in uppipes:
             pipeMidPos = pipe['x'] + (gameimgs['pipe'][0].get_width()/2 - 2)
             if pipeMidPos <= playerMidPos < pipeMidPos +4 :
-                player_score += 1
+                playerscore += 1
                 pygame.mixer.Sound.play(scoreS)
 
 
@@ -288,15 +288,15 @@ def flappygame():
 
 
         #Draw score to screen
-        player_scoredis = highfont.render(str(player_score),True, white)
-        player_scoredisrect = player_scoredis.get_rect()
-        player_scoredisrect.top = 10
-        player_scoredisrect.right = 570
-        if player_score >= 10:
-            player_scoredisrect.right = 568
-        if player_score >= 100:
-            player_scoredisrect.right = 566
-        window.blit(player_scoredis,player_scoredisrect)
+        playerscoredis = highfont.render(str(playerscore),True, white)
+        playerscoredisrect = playerscoredis.get_rect()
+        playerscoredisrect.top = 10
+        playerscoredisrect.right = 570
+        if playerscore >= 10:
+            playerscoredisrect.right = 568
+        if playerscore >= 100:
+            playerscoredisrect.right = 566
+        window.blit(playerscoredis,playerscoredisrect)
 
         leo_smile_check -= 1
         #Update display at set frames per second
@@ -305,10 +305,10 @@ def flappygame():
 
 #creates pipe at random height
 def createPipe():
-    offset = window_height/3
+    offset = windowheight/3
     pipeheight = gameimgs['pipe'][0].get_height()
-    pipeY2 = offset + random.randrange(0, int(window_height -1.2*offset))
-    pipeX = window_width + 10
+    pipeY2 = offset + random.randrange(0, int(windowheight -1.2*offset))
+    pipeX = windowwidth + 10
     pipeY1 = pipeheight - pipeY2 + offset
     pipe = [
         #upper pipe
@@ -348,7 +348,7 @@ if __name__ == "__main__":
     smallfont = pygame.font.Font(defaultfont, 10)
     font = pygame.font.Font(defaultfont, 20)
     highfont = pygame.font.Font(defaultfont, 30)
-    enterfont = pygame.font.Font(defaultfont, 15)
+    enterfont = pygame.font.Font(defaultfont, 12)
     bigfont = pygame.font.Font(defaultfont, 50)
 
     #sets name for game window
@@ -373,11 +373,11 @@ if __name__ == "__main__":
     window.fill(black)
     start = bigfont.render("FLAPPY LEO",True, green)
     startrect = start.get_rect()
-    startrect.center = (window_width // 2, window_height // 2)
+    startrect.center = (windowwidth // 2, windowheight // 2)
     startrect.top = 125
     space = font.render("PRESS SPACE TO START",True,white)
     spacerect = space.get_rect()
-    spacerect.center = (window_width // 2, window_height // 2)
+    spacerect.center = (windowwidth // 2, windowheight // 2)
     spacerect.top = 250
     window.blit(start,startrect) 
     pygame.display.update()
@@ -398,8 +398,8 @@ if __name__ == "__main__":
     pygame.event.clear()
     while True:
         #sets variables for collision and leo placement
-        vertical = window_width/2
-        horizontal = window_height/5
+        vertical = windowwidth/2
+        horizontal = windowheight/5
         ground = 0
 
         #Checks for user input and starts game if right input
