@@ -21,7 +21,7 @@ def sql():
     if playerscore == 0:
         return
 
-    #Else connects to database
+    #Else try connection to database
     try:
         my = mysql.connector.connect(host="localhost", user="root", password="password", database="flappybird")
         mycursor = my.cursor()
@@ -140,6 +140,18 @@ def sql():
         window.blit(continuetxt,continuetxtrect)
         pygame.display.update()
         print("Connection to database unsuccessfull")
+        #waits for user input to go to next screen
+        pygame.event.clear()
+        while True:
+            event = pygame.event.wait()
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == KEYDOWN and event.key == K_ESCAPE:
+                pygame.quit()
+                sys.exit()
+            elif event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
+                break
                 
             
 
