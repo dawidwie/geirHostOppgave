@@ -52,7 +52,7 @@ Informasjon blir lagret til databasen og den blir oppdatert dersom poengsummen t
 3.5	Programmeringsspråk og versjon. 
 
 Python 3.11
-
+MySQL 8.0.31
 
 
  
@@ -112,3 +112,17 @@ Variabler for velocity av spillfigur inneholder understrek, dersom navnet ble la
 9.1	Oversikt over FAQ og kjente feil og mangler med beskrivelse av mulige løsninger – primært for brukere/brukerstøttefunksjon og driftspersonell.
 For å hente navn av spiller brukte jeg først en input funksjon, men dette fikk pygame til å fryse opp. 
 Jeg fant en erstatning for det, som var TKinter. TKinter sendte ut en dialogboks istedenfor, som fikk pygame til å fortsette å kjøre
+
+
+ER Diagram
+
+https://cdn.discordapp.com/attachments/800718989805748226/1060252366630301818/image.png
+
+
+Forklaring av SQL kobling
+
+1. last ned mysql og mysql connector for python
+2. lag en table i databasen som skal har verdiene du vil lagre fra spillet
+3. importer mysql.connector i python
+4. lag en connection med databasen din ved hjelp av mysql.connector.connect funskjonen (spesifiser host, user, passord og database). lagre dette i en variabel
+5. bruk cursor funksjonen til å navigere rundt databasen

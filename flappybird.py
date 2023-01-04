@@ -16,7 +16,6 @@ def getPlayerName() -> str:
     return playerName
 
 def sql():
-
     #Returns to game screen if playerscore is 0
     if playerscore == 0:
         return
