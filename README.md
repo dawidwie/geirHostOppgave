@@ -35,7 +35,7 @@ Systemet lagrer ikke personlig informasjon og trenger derfor ikke å forholde se
 
 3.1	Versjon.
 
-Commit: 0974537 
+Commit: 4a6a8ec
 
 3.2	En beskrivelse av grensesnitt mot andre IT-systemer, manuelle eller maskinelle, som angir type, format og på import- og eksportdata. 
 
